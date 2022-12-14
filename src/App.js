@@ -12,37 +12,20 @@ import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 
 function App() {
-  const [posts, setPosts] = useState([
-    {
-      id: 1,
-      title: 'My 1st Post',
-      datetime: 'July 01, 2021 11:17:36 AM',
-      body: 'djdjddjdddddd dddddddd dddd ddddddddd ddddddddd ddddddd ddddddd d dddd dddddd d ddddd ddd dddd d',
-    },
-    {
-      id: 2,
-      title: 'My 2nd Post',
-      datetime: 'July 01, 2021 11:17:36 AM',
-      body: 'djdjddj',
-    },
-    {
-      id: 3,
-      title: 'My 3rd Post',
-      datetime: 'July 01, 2021 11:17:36 AM',
-      body: 'djdjddj',
-    },
-    {
-      id: 4,
-      title: 'My 4th Post',
-      datetime: 'July 01, 2021 11:17:36 AM',
-      body: 'djdjddj',
-    },
-  ]);
+  const [posts, setPosts] = useState(
+    JSON.parse(localStorage.getItem('posts')) || []
+  );
+
   const [search, setSearch] = useState('');
   const [seachResults, setSearchResults] = useState([]);
   const [postTitle, setPostTitle] = useState('');
   const [postBody, setPostBody] = useState('');
   const history = useHistory();
+
+  const setAndSavePosts = (PostList) => {
+    setPosts(PostList);
+    localStorage.setItem('posts', JSON.stringify(PostList));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -55,8 +38,9 @@ function App() {
       body: postBody,
     };
 
-    const allPosts = { ...posts, newPost };
-    setPosts(allPosts);
+    const allPosts = [...posts, newPost];
+    setAndSavePosts(allPosts);
+
     setPostTitle('');
     setPostBody('');
     history.push('/');
@@ -64,7 +48,7 @@ function App() {
 
   const handleDelete = (id) => {
     const postList = posts.filter((post) => post.id !== id);
-    setPosts(postList);
+    setAndSavePosts(postList);
     history.push('/');
   };
 
